@@ -1,0 +1,28 @@
+1.select customerID,sum(dataused) as "Duration" from customerinteractions where month="March" 
+group by customerid having Duration> (select avg(dataused) from customerinteractions where month = "March");
+
+2.
+
+
+3.
+
+
+
+4. select productTypeId,sum(totalsalesamount) from quarterlysales where productTypeId = 1;
+
+5. select producttypeid from quarterlysales 
+where quarter = "Q1" AND YEAR = "2024" GROUP BY PRODUCTTYPEID ORDER BY SUM(UNITSSOLD) DESC LIMIT 1;
+
+6.SELECT avg(totalsalesamount/unitssold) AS AVERAGE_SALES_PRICE FROM QUARTERLYSALES WHERE producttypeid = 1 and Quarter = "Q2" and Year="2024";
+
+7. 
+
+8.
+
+9. select energysource,sum(consumptionkwh) from sectorenergyconsumption where month = "february" group by energysource;
+
+10. select customername from insuranceactivities where Investigation = "No" or feedbackscore>(select avg(feedbackscore) from insuranceactivities);
+
+11. select (sum(annualpremium)) as total from insuranceactivities where Investigation = "No" and feedbackscore>(select avg(feedbackscore) from insuranceactivities) and claimscount>1;
+
+12. 
