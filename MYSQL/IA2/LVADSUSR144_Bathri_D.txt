@@ -1,0 +1,40 @@
+1.) select machine_id from l1_maintenance_records where month(maintenance_date)=3 and year(maintenance_date)=2024 and cost>(select avg(cost) from l1_maintenance_records
+where month(maintenance_date)=3 and year(maintenance_date) = 2024);
+
+2.) select maintenance_type from l1_maintenance_records where month(maintenance_date)=3 and year(maintenance_date) = 2024 group by maintenance_type order by count(*) desc limit 1;
+
+3.) select technician_name, count(*) as avg_cost from l1_maintenance_records
+where month(maintenance_date) = 3 and year(maintenance_date) = 2024 group by technician_name order by count(*) desc;
+
+4.) select product_id, avg((incident_count_pre_update)-(incident_count_post_update)) as reduction from
+l2_updates group by product_id order by reduction desc;
+
+5.) select update_id, (incident_count_pre_update-incident_count_post_update) as diff,user_feedback_score from l2_updates
+group by update_id order by user_feedback_score desc;
+
+6.) select product_id from l2_updates where incident_count_post_update = (select max(incident_count_post_update) from l2_updates)
+and user_feedback_score = (select min(user_feedback_score) from l2_updates);
+
+7.) select p.patient_name,v.facility_id,v.reason_for_visit,t.outcome from 
+l3_visits v join l3_patients p using(patient_id)
+join  l3_treatments t using(visit_id) where month(v.visit_date) = 3 and year(v.visit_date) = 2024 
+group by p.patient_name,v.facility_id,v.reason_for_visit,t.outcome having count(*)>1;
+
+8.)  select f.facility_name from l3_facilities f join l3_visits v using(facility_id)
+where v.reason_for_visit="emergency" and v.visit_date like "2024-03-%" group by f.facility_name 
+order by count(*) desc;
+
+9.) select p.insurance_provider from l3_visits v join l3_patients p using(patient_id)
+join l3_treatments t using(visit_id)
+where t.outcome = "complicated" and month(v.visit_date) in (1,2,3) group by p.insurance_provider order by count(*);
+
+10.) NA
+
+
+11.) create  view sales_view as
+select * from l4_sales sale join l4_stores sto using(store_id);
+select * from sales_view;
+select region, sum((select price from l4_products where l4_products.product_id = sales_view.product_id)*quantity) as Revenue
+from sales_view where month(sale_date) in (1,2,3) and year(sale_date) = 2024 group by region order by Revenue desc limit 1;
+
+12.) NA
