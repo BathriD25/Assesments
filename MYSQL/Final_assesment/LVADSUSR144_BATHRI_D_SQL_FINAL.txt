@@ -1,0 +1,79 @@
+Final Assesment
+
+1.) select p.product_category,avg(sr.sales_amount)  as avg_sales from 
+products p join sales_records sr using(product_id)
+where datediff(curdate(),sr.sales_date)<30 group by p.product_category;
+
+2.)select p.product_name,sum(sr.sales_amount) as total_revenue,
+rank() over(order by sum(sr.sales_amount) desc) as ranks from products p join sales_records sr
+using(product_id) where year(sales_date)=year(curdate()) group by p.product_name order by 
+sum(sr.sales_amount) desc limit 3;
+
+3.)select c.customer_name,sum(sr.sales_amount),
+percent_rank() over(order by sum(sr.sales_amount)) as per_rank,
+rank() over(order by sum(sr.sales_amount) desc) as ranks
+from customers c join sales_records sr using(customer_id) group by c.customer_name;
+
+4.)select customer_name, case 
+when (select count(*) from sales_view where sales_date between as pruchase_count then "Consistent Buyer"
+else "Occasional Buyer" end as purchase_behaviour
+from sales_view group by customer_name;
+
+-- LAB 2
+
+5.)select f.departure_airport,f.arrival_airport,round(avg(t.ticket_price),2) as avg_price
+from flights f join tickets t using(flight_id) group by f.departure_airport,f.arrival_airport;
+
+6.) select f.flight_number,f.departure_date,count(t.flight_id) as total_ticket from 
+flights f join tickets t using(flight_id) group by f.flight_number,f.departure_date having
+f.departure_date>date_sub(curdate(),interval 1 month) order by total_ticket desc;
+
+7.) select p.passenger_name,sum(t.ticket_price) as total,p.frequent_flyer_status
+from passengers p join tickets t using(passenger_id) group by p.passenger_name,frequent_flyer_status order by total desc limit 5;
+
+8.) select monthname(ticket_date) as month,count(*) as booking_count from tickets group by monthname(ticket_date)
+order by count(*) desc limit 1;
+
+-- Lab 3
+
+9.) NA
+
+10.)select g.game_name,count(ps.game_id) as player_count from 
+games g join playerscores ps using(game_id) group by g.game_name
+order by player_count desc limit 3;
+
+11.) select g.game_name,round(avg(ps.score),2) as avg_score,max(ps.score) as max_score,count(ps.game_id) as player_count
+from games g join playerscores ps using(game_id) group by g.game_name;
+
+12.) select p.player_name,p.registration_date,ps.play_date from players p join playerscores ps using(player_id)
+where datediff(curdate(),ps.play_date)>30;
+
+-- Lab 4
+
+13.) select d.doctor_name,sum(t.cost)+sum(p.bill_amount) as total_cost from doctors d join treatments t using(doctor_id)
+join patients p using(patient_id) group by d.doctor_name order by total_cost desc limit 5;
+
+14.) select t.treatment_name,sum(t.cost) + sum(p.bill_amount)as revenue,
+cume_dist() over(order by sum(t.cost)+sum(p.bill_amount)) as cum_dist
+from treatments t join patients p using(patient_id)
+group by t.treatment_name order by (sum(t.cost)+sum(p.bill_amount));
+
+15.) NA
+
+16.)with new_cte as(select gender,diagnosis,datediff(discharge_date,admission_date) as diff from patients)
+select gender,diagnosis,avg(diff) over(partition by gender,diagnosis) as avg_diff from new_cte;
+
+ -- Lab 5
+
+17.) select c.department,e.semester,avg(e.grade) as avg_grade
+from courses c join enrollments e using(course_id) group by c.department,e.semester order by c.department,e.semester;
+
+18.) select s.major,count(e.student_id) as student_count,s.enrollment_year from students s join
+enrollments e using(student_id) group by s.major,s.enrollment_year order by count(e.student_id) desc limit 5;
+
+19.) select s.student_id,s.student_name,e.semester,sum(c.credits) as credits from enrollments e join students s
+using(student_id) join courses c using(course_id) group by s.student_id,s.student_name,e.semester having
+sum(c.credits)>=50;
+
+20.) select c.course_name,s.enrollment_year,count(e.student_id) from enrollments e join students s using(student_id)
+join courses c using(course_id) group by c.course_name,s.enrollment_year order by s.enrollment_year desc limit 3;
